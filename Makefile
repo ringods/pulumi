@@ -51,6 +51,13 @@ lint::
 		pushd $$DIR && golangci-lint run -c ../.golangci.yml --deadline 5m && popd ; \
 	done
 
+.PHONY: test_containers
+# Tests the Docker containers built in this repository. Requires that the
+# current CLI version (even if -dev) has been published to S3, NPM, etc.
+test_containers:
+	export CLI_VERSION=$(shell ./scripts/get-version HEAD) && \
+	    ./scripts/build-docker.sh "$${CLI_VERSION}" "--publish"
+
 test_fast::
 	cd pkg && $(GO_TEST_FAST) ${PROJECT_PKGS}
 
@@ -75,7 +82,9 @@ coverage:
 
 # The travis_* targets are entrypoints for CI.
 .PHONY: travis_cron travis_push travis_pull_request travis_api
-travis_cron: all coverage
-travis_push: only_build publish_tgz only_test publish_packages
+travis_cron: all coverage test_containers
+# DO NOT SUBMIT: Testing.
+# travis_push: only_build publish_tgz only_test publish_packages
+travis_push: only_build publish_tgz test_containers
 travis_pull_request: all
 travis_api: all
