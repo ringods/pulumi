@@ -17,6 +17,9 @@ CHANGELOG
 - Fix handling of secret values in mock-based tests.
   [#4272](https://github.com/pulumi/pulumi/pull/4272)
 
+- Add additional overloads to Deployment.RunAsync in .NET API.
+  [#4286](https://github.com/pulumi/pulumi/pull/4286)
+
 ## 1.14.0 (2020-04-01)
 - Fix error related to side-by-side versions of `@pulumi/pulumi`.
   [#4235](https://github.com/pulumi/pulumi/pull/4235)
