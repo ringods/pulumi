@@ -20,9 +20,9 @@ echo_header() {
     echo -e "\n\033[0;35m${1}\033[0m"
 }
 
-# Strip off the commit hash, so "v1.14.0-alpha.1586190504+gf4e9f7e2"
+# Docker tags have more strict rules, so we drop the commit hash, e.g. "v1.14.0-alpha.1586190504+gf4e9f7e2"
 # becomes just "v1.14.0-alpha.1586190504".
-CLI_VERSION=$(echo "${1}" | sed 's/\+.*//')
+CLI_VERSION_TAG=$(echo "${1}" | sed 's/\+.*//g')
 
 echo_header "Building containers with tag ${CLI_VERSION}"
 
@@ -73,7 +73,7 @@ publish_containers() {
 
     for container in ${PULUMI_CONTAINERS[@]}; do
         echo "- pulumi/${container}"
-        docker push "pulumi/${container}:${CLI_VERSION}"
+        docker push "pulumi/${container}:${CLI_VERSION_TAG}"
         docker push "pulumi/${container}:latest"
     done
 
@@ -87,7 +87,7 @@ echo_header "Building Pulumi containers"
 for container in ${PULUMI_CONTAINERS[@]}; do
     echo "- Building pulumi/${container}"
     docker build --build-arg PULUMI_VERSION="${CLI_VERSION}" \
-        -t "pulumi/${container}:${CLI_VERSION}" \
+        -t "pulumi/${container}:${CLI_VERSION_TAG}" \
         -t "pulumi/${container}:latest" \
         "${SCRIPT_DIR}/../dist/${container}"
 done
