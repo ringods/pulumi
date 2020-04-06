@@ -15,11 +15,16 @@ if [ -z "${1:-}" ]; then
     >&2 echo "error: missing version to publish"
     exit 1
 fi
-CLI_VERSION="${1}"
 
 echo_header() {
     echo -e "\n\033[0;35m${1}\033[0m"
 }
+
+# Strip off the commit hash, so "v1.14.0-alpha.1586190504+gf4e9f7e2"
+# becomes just "v1.14.0-alpha.1586190504".
+CLI_VERSION=$(echo "${1}" | sed 's/\+.*//')
+
+echo_header "Building containers with tag ${CLI_VERSION}"
 
 # Test the containers.
 test_containers() {
